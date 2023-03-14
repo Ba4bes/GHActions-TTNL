@@ -1,5 +1,5 @@
 # GHActions-TTNL
-GitHub Actions to deploy to Azure: Take it to the next level
+🚀GitHub Actions to deploy to Azure: Take it to the next level
 
 Barbara Forbes  
 [@ba4bes](https://twitter.com/ba4bes)  

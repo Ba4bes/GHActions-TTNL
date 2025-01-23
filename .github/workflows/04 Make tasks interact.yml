@@ -1,46 +1,20 @@
-name: '05 work in stages'
+name: '04 make tasks interact'
 
-# Controls when the workflow will run
 on:
-
-  # Allows you to run this workflow manually from the Actions tab
+  # push:
+  #   branches:
+      # - main
   workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      
-      #login to Azure
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.CLIENTID }}
-          tenant-id: ${{ secrets.TENANTID }}
-          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
-
-      - name: build Bicep file
-        uses: Azure/cli@v2.1.0
-        with:
-          inlineScript: |
-            az bicep build --file logAnalyticsWorkspace.bicep
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read
 
-    steps: 
+    steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
@@ -74,4 +48,3 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTIONID }}
           template-file: ./WebAppSolution.bicep
           parameters: '{"webappName":"ghexample4bes2", "serverFarmName":"ghexample4bes", "workspaceResourceId":"${{steps.law.outputs.logAnalyticsWorkspaceResourceID}}" }'
-          

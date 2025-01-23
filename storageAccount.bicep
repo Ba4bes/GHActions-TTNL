@@ -5,7 +5,7 @@ param storageAccountPrefix string
 
 var storageAccountName = toLower('${storageAccountPrefix}${uniqueString(subscription().id)}')
 
-resource sta 'Microsoft.Storage/storageAccounts@2022-09-01' = {
+resource sta 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
   location: location
   sku: {

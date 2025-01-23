@@ -1,38 +1,35 @@
 name: '03 Deploy Bicep file'
 
-# Controls when the workflow will run
 on:
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 permissions:
-  id-token: write
+  id-token: write #This is required for requesting the JWT
   contents: read
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      
-      #login to Azure
-      - name: Azure Login
-        uses: Azure/login@v1
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
-          client-id: ${{ secrets.ClientID }}
-          tenant-id: ${{ secrets.TenantID }}
-          subscription-id: ${{ secrets.SubscriptionID }}
-        
+          client-id: ${{ secrets.CLIENTID }}
+          tenant-id: ${{ secrets.TENANTID }}
+          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
+
       - name: Deploy Bicep Template
-        uses: Azure/arm-deploy@v1
+        uses: azure/bicep-deploy@v2
         with:
-          scope: resourcegroup
-          resourceGroupName: GitHubDemo
-          template: 'storageAccount.bicep'
-          deploymentName: "gh${{github.run_id}} "
-          parameters: "storageAccountPrefix=gh"
-          
+          type: deployment
+          operation: create
+          scope: resourceGroup
+          resource-group-name: bitbashdemo
+          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
+          template-file: ./storageAccount.bicep
+          parameters: '{"storageAccountPrefix": "gh"}'

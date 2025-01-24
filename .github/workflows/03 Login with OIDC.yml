@@ -1,4 +1,4 @@
-name: '02b Login with OpenID connect'
+name: '03 Login with OpenID connect'
 
 # Controls when the workflow will run
 on:

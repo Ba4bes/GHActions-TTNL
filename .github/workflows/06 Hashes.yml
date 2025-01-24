@@ -1,4 +1,4 @@
-name: '05 work in stages'
+name: '06 Hashes'
 
 # Controls when the workflow will run
 on:
@@ -18,7 +18,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-
+      
       #login to Azure
       - name: Login to Azure
         uses: azure/login@a65d910e8af852a8061c627c456678983e180302
@@ -32,3 +32,47 @@ jobs:
         with:
           inlineScript: |
             az bicep build --file logAnalyticsWorkspace.bicep
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read
+
+
+    steps: 
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.CLIENTID }}
+          tenant-id: ${{ secrets.TENANTID }}
+          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
+
+      - name: Deploy LAW
+        uses: azure/bicep-deploy@v2
+        id: law
+        with:
+          type: deployment
+          operation: create
+          scope: resourceGroup
+          resource-group-name: bitbashdemo
+          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
+          template-file: ./logAnalyticsWorkspace.bicep
+          parameters: '{"logAnalyticsWorkspaceName": "ghlaw"}'
+
+      - name: Deploy WebApp
+        uses: azure/bicep-deploy@v2
+        id: webapp
+        with:
+          type: deployment
+          operation: create
+          scope: resourceGroup
+          resource-group-name: bitbashdemo
+          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
+          template-file: ./WebAppSolution.bicep
+          parameters: '{"webappName":"ghexample4bes2", "serverFarmName":"ghexample4bes", "workspaceResourceId":"${{steps.law.outputs.logAnalyticsWorkspaceResourceID}}" }'
+          

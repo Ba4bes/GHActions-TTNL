@@ -1,0 +1,61 @@
+name: '02 jobs'
+
+# Controls when the workflow will run
+on:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGERED by an opened pull request
+        run: echo Oh noes
+
+
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGERED by an opened pull request
+        run: echo Oh noes
+
+  job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGERED by an opened pull request
+        run: echo Oh noes
+
+  job2a:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGERED by an opened pull request
+        run: echo Oh noes
+
+  job2b:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGERED by an opened pull request
+        run: echo Oh noes
+
+  job2c:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGERED by an opened pull request
+        run: echo Oh noes
+
+  job3:
+    needs: [job2a , job2b]
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGERED by an opened pull request
+        run: echo Oh noes

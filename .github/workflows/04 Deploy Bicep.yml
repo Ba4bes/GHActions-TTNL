@@ -1,18 +1,20 @@
-name: '03 Deploy Bicep file'
+name: '04 Deploy Bicep file'
 
 on:
-
+  # push:
+  #   branches:
+      # - main
   workflow_dispatch:
 
-permissions:
-  id-token: write #This is required for requesting the JWT
-  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read
 
-    steps:
+    steps: 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
@@ -33,3 +35,4 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTIONID }}
           template-file: ./storageAccount.bicep
           parameters: '{"storageAccountPrefix": "gh"}'
+

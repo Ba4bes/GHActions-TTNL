@@ -1,21 +1,40 @@
-name: '04 make tasks interact'
+name: '07 final flow'
 
 on:
-  # push:
-  #   branches:
-      # - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.CLIENTID }}
+          tenant-id: ${{ secrets.TENANTID }}
+          subscription-id: ${{ secrets.SUBSCRIPTIONID }}
+
+      - name: build Bicep file
+        uses: Azure/cli@v2.1.0
+        with:
+          inlineScript: |
+            az bicep build --file logAnalyticsWorkspace.bicep
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps: 
       - uses: actions/checkout@v4
 
       - name: Login to Azure
@@ -48,3 +67,4 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTIONID }}
           template-file: ./WebAppSolution.bicep
           parameters: '{"webappName":"ghexample4bes2", "serverFarmName":"ghexample4bes", "workspaceResourceId":"${{steps.law.outputs.logAnalyticsWorkspaceResourceID}}" }'
+          

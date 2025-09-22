@@ -28,7 +28,7 @@ jobs:
           subscription-id: ${{ secrets.SUBSCRIPTIONID }}
 
       - name: build Bicep file
-        uses: Azure/cli@089eac9d8cc39f5d003e94f8b65efc51076c9cbd
+        uses: Azure/cli@9f7ce6f37c31b777ec6c6b6d1dfe7db79f497956
         with:
           inlineScript: |
             az bicep build --file logAnalyticsWorkspace.bicep
